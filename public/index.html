@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>NeonPulse | Advanced Chat</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3bbffa",
+                        "primary-container": "#22b1ec",
+                        "on-primary-container": "#002b3d",
+                        "on-primary": "#00374d",
+                        "secondary-container": "#3c475a",
+                        "tertiary": "#c180ff",
+                        "surface": "#060e20",
+                        "surface-container": "#0f1930",
+                        "surface-container-low": "#091328",
+                        "surface-container-highest": "#192540",
+                        "surface-bright": "#1f2b49",
+                        "on-surface": "#dee5ff",
+                        "on-surface-variant": "#a3aac4",
+                        "outline-variant": "#40485d",
+                        "error": "#ff716c",
+                        "error-container": "#9f0519",
+                        "on-error-container": "#ffa8a3"
+                    },
+                    fontFamily: {
+                        headline: ["Manrope"],
+                        body: ["Inter"]
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #192540; border-radius: 10px; }
+        .glass-panel {
+            background: rgba(25, 37, 64, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface flex h-screen w-screen overflow-hidden selection:bg-primary/30 selection:text-primary">
+
+    <!-- LOGIN VIEW -->
+    <div id="login-view" class="flex items-center justify-center w-full h-full relative z-10">
+        <div class="fixed inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]"></div>
+            <div class="absolute -bottom-[10%] -right-[10%] w-[50%] h-[50%] bg-tertiary/5 rounded-full blur-[150px]"></div>
+        </div>
+        <main class="relative w-full max-w-md z-10">
+            <div class="flex flex-col items-center mb-8">
+                <div class="mb-4">
+                    <span class="material-symbols-outlined text-5xl text-primary font-bold" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                </div>
+                <h1 class="font-headline text-3xl font-black text-on-surface tracking-widest uppercase">NeonPulse</h1>
+                <p class="text-on-surface-variant text-sm font-medium mt-1">THE SYNTHETIC HORIZON</p>
+            </div>
+            <div class="glass-panel p-8 rounded-xl shadow-[0_32px_64px_-12px_rgba(59,191,250,0.06)] border-t border-white/5">
+                <div class="mb-8">
+                    <h2 class="font-headline text-2xl font-bold text-on-surface">Welcome back</h2>
+                    <p class="text-on-surface-variant text-sm mt-2">Sign in to your secure communication terminal</p>
+                </div>
+                <form id="login-form" class="space-y-6">
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-primary tracking-widest uppercase ml-1">Username</label>
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-on-surface-variant group-focus-within:text-primary transition-colors">
+                                <span class="material-symbols-outlined text-lg">alternate_email</span>
+                            </div>
+                            <input id="username" class="w-full bg-surface-container-highest border-none text-on-surface placeholder:text-on-surface-variant/40 rounded-lg py-3.5 pl-12 pr-4 focus:ring-0 transition-all font-body" placeholder="identity_tag" required type="text"/>
+                            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-primary group-focus-within:w-full transition-all duration-300"></div>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-primary tracking-widest uppercase ml-1">Password</label>
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-on-surface-variant group-focus-within:text-primary transition-colors">
+                                <span class="material-symbols-outlined text-lg">lock</span>
+                            </div>
+                            <input id="password" class="w-full bg-surface-container-highest border-none text-on-surface placeholder:text-on-surface-variant/40 rounded-lg py-3.5 pl-12 pr-12 focus:ring-0 transition-all font-body" placeholder="••••••••" required type="password"/>
+                            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-primary group-focus-within:w-full transition-all duration-300"></div>
+                        </div>
+                    </div>
+                    <div id="login-error" class="hidden items-start bg-error-container/10 p-3 rounded-lg border border-error-container/20">
+                        <span class="material-symbols-outlined text-error text-lg mr-2">error</span>
+                        <p id="login-error-text" class="text-xs text-on-error-container font-medium">Invalid credentials detected.</p>
+                    </div>
+                    <div class="space-y-3 pt-2">
+                        <button type="submit" class="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary-container font-headline font-bold py-4 rounded-xl shadow-[0_8px_24px_rgba(59,191,250,0.2)] hover:shadow-[0_12px_32px_rgba(59,191,250,0.3)] transition-all active:scale-95">
+                            Login
+                        </button>
+                        <button id="register-btn" type="button" class="w-full bg-transparent text-on-surface font-headline font-bold py-4 rounded-xl border border-outline-variant/20 hover:bg-surface-container-highest transition-all active:scale-95">
+                            Register
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <footer class="mt-8 text-center">
+                <p class="text-on-surface-variant text-[10px] tracking-[0.2em] uppercase opacity-50 font-medium">Encrypted Real-Time Terminal v4.0.2</p>
+            </footer>
+        </main>
+    </div>
+
+    <!-- CHAT VIEW -->
+    <div id="chat-view" class="hidden w-full h-full flex flex-row">
+        
+        <!-- SIDEBAR -->
+        <aside class="h-screen w-72 flex-shrink-0 flex flex-col bg-[#0f1930] shadow-none z-20">
+            <div class="p-6 flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-2xl font-black text-[#38bdf8] uppercase tracking-widest">NeonPulse</span>
+                    <div class="flex items-center gap-2">
+                        <div id="connection-indicator" class="w-2 h-2 rounded-full bg-error shadow-[0_0_8px_#ff716c]"></div>
+                        <span id="connection-status-text" class="text-xs font-headline font-bold text-on-surface-variant tracking-tight uppercase">Offline</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-[#192540] rounded-xl">
+                    <div class="w-10 h-10 rounded-lg bg-surface flex items-center justify-center font-bold text-primary uppercase" id="my-avatar">A</div>
+                    <div class="flex flex-col">
+                        <span id="my-username" class="font-headline font-bold text-sm">...</span>
+                        <span class="text-xs text-on-surface-variant">Connected Node</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Global Search Users -->
+            <div class="px-6 pb-2">
+                <div class="relative group">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm group-focus-within:text-primary transition-colors">search</span>
+                    <input id="user-search" class="w-full bg-surface-container-highest/50 border-none rounded-lg py-2 pl-9 pr-4 text-sm font-body text-on-surface placeholder:text-on-surface-variant/50 focus:ring-1 focus:ring-primary/50 transition-all outline-none" placeholder="Search Global Users..." type="text"/>
+                </div>
+                <div id="search-results" class="hidden absolute w-56 mt-2 bg-surface-bright rounded-lg shadow-xl z-50 p-2 space-y-1">
+                    <!-- Search results here -->
+                </div>
+            </div>
+
+            <nav class="flex flex-col flex-grow overflow-y-auto">
+                <div class="px-4 py-2 mt-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em]">Conversations</div>
+                <div id="sidebar-conversations-list" class="flex flex-col gap-1 px-2">
+                    <!-- Convo templates appended here -->
+                </div>
+            </nav>
+        </aside>
+
+        <!-- MAIN CHAT AREA -->
+        <main class="flex-grow flex flex-col relative bg-surface">
+            <!-- HEADER -->
+            <header class="w-full h-16 flex items-center justify-between px-8 border-b border-[#40485d]/20 bg-[#060e20] z-10">
+                <div class="flex items-center gap-4" id="chat-header-info" style="visibility: hidden;">
+                    <div class="relative">
+                        <div id="active-chat-avatar" class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container font-headline font-bold flex flex-col items-center justify-center text-lg uppercase">?</div>
+                    </div>
+                    <div>
+                        <h1 id="active-chat-name" class="text-xl font-bold text-[#dee5ff] font-headline">Select a Chat</h1>
+                        <div class="flex items-center gap-2">
+                            <span id="active-chat-typing" class="hidden text-[10px] text-primary italic font-semibold">typing...</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- MESSAGES CONTAINER -->
+            <div id="chat-messages-container" class="flex-grow overflow-y-auto p-8 space-y-6 scroll-smooth flex flex-col">
+                <div class="m-auto text-sm text-on-surface-variant">Select a user or search to start a direct connection.</div>
+            </div>
+
+            <!-- INPUT AREA -->
+            <footer id="chat-input-area" class="sticky bottom-0 w-full bg-[#060e20] p-4 z-10 opacity-50 pointer-events-none">
+                <form id="message-form" class="max-w-4xl mx-auto flex items-center gap-4 bg-[#192540] rounded-2xl p-2 px-4 shadow-[0_-8px_32px_rgba(59,191,250,0.06)] relative group">
+                    <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-focus-within:w-full"></div>
+                    <input id="message-input" autocomplete="off" class="flex-grow bg-transparent border-none text-on-surface placeholder:text-on-surface-variant/50 focus:ring-0 py-4 text-sm font-body outline-none" placeholder="Type a message..." type="text"/>
+                    <div class="flex items-center gap-2">
+                        <button type="submit" class="bg-[#38bdf8] text-white rounded-full p-3 shadow-[0_0_15px_rgba(56,189,248,0.4)] hover:scale-105 active:scale-90 transition-all font-headline font-bold disabled:opacity-50 flex items-center justify-center" id="send-btn">
+                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>
+                        </button>
+                    </div>
+                </form>
+            </footer>
+        </main>
+    </div>
+
+    <!-- TEMPLATES -->
+    <template id="tpl-incoming-msg">
+        <div class="flex gap-4 max-w-2xl">
+            <div class="w-8 h-8 rounded-full self-end bg-surface-container-highest text-on-surface flex items-center justify-center text-xs font-bold uppercase avatar-placeholder">U</div>
+            <div class="flex flex-col gap-1">
+                <div class="bg-surface-container-low text-on-surface p-4 rounded-2xl rounded-bl-sm shadow-sm message-bubble">
+                    <p class="text-sm leading-relaxed message-text"></p>
+                </div>
+                <span class="text-[10px] text-on-surface-variant ml-1 message-time"></span>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-outgoing-msg">
+        <div class="flex gap-4 max-w-2xl ml-auto flex-row-reverse" id="msg-">
+            <div class="w-8 h-8 rounded-full self-end bg-primary-container text-on-primary-container flex items-center justify-center text-xs font-bold uppercase avatar-placeholder">M</div>
+            <div class="flex flex-col gap-1 items-end">
+                <div class="bg-primary-container text-on-primary-container p-4 rounded-2xl rounded-br-sm shadow-sm message-bubble opacity-80 transation-opacity duration-300">
+                    <p class="text-sm leading-relaxed font-medium message-text"></p>
+                </div>
+                <span class="text-[10px] text-on-surface-variant mr-1 flex items-center gap-1 message-time-status">
+                    <span class="message-time"></span>
+                    <span class="material-symbols-outlined text-[12px] text-on-surface-variant msg-status-icon">schedule</span>
+                </span>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-convo-list-item">
+        <div class="flex items-center gap-3 p-3 hover:bg-surface-container-highest/60 rounded-xl cursor-pointer transition-all conversation-item">
+            <div class="relative">
+                <div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center font-bold uppercase convo-icon">U</div>
+            </div>
+            <div class="flex-grow min-w-0">
+                <div class="flex justify-between items-baseline">
+                    <span class="text-sm font-headline font-bold truncate convo-name">User</span>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="/app.js"></script>
+</body>
+</html>

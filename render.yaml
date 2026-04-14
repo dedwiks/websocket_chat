@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: websocket-chat-service
+    runtime: docker
+    plan: starter
+    autoDeploy: true
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: APP_BASE_URL
+        sync: false
+      - key: CLIENT_ORIGIN
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: AUTH_TOKEN_SECRET
+        generateValue: true
+      - key: REFRESH_TOKEN_SECRET
+        generateValue: true
+      - key: ACCESS_TOKEN_TTL_SECONDS
+        value: 900
+      - key: REFRESH_TOKEN_TTL_SECONDS
+        value: 2592000
+      - key: PRESENCE_TTL_SECONDS
+        value: 45
+      - key: TYPING_TTL_SECONDS
+        value: 5
+      - key: HEARTBEAT_INTERVAL_MS
+        value: 30000
+      - key: MESSAGE_HISTORY_PAGE_SIZE
+        value: 50
+      - key: MAX_MESSAGE_LENGTH
+        value: 2000
+      - key: HTTP_LOGIN_LIMIT_PER_SECOND
+        value: 5
+      - key: HTTP_SEARCH_LIMIT_PER_SECOND
+        value: 5
+      - key: WS_MESSAGE_LIMIT_PER_SECOND
+        value: 10
+      - key: WS_EVENT_LIMIT_PER_SECOND
+        value: 30
