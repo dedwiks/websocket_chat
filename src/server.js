@@ -1,3 +1,11 @@
+process.on("uncaughtException", (err) => {
+  console.error("💥 UNCAUGHT EXCEPTION:", err);
+});
+
+process.on("unhandledRejection", (err) => {
+  console.error("💥 UNHANDLED REJECTION:", err);
+});
+
 console.log("==== ENV DEBUG START ====");
 console.log("DATABASE_URL:", process.env.DATABASE_URL);
 console.log("NODE_ENV:", process.env.NODE_ENV);
