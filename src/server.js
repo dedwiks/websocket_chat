@@ -70,117 +70,19 @@ server.on("upgrade", (request, socket, head) => {
   }
 });
 
-wss.on("connection", async (ws, request) => {
+wss.on("connection", (ws, req) => {
   console.log("WS CONNECTED");
 
-  let socketId = null;
-  let tokenExpiryTimer = null;
+  ws.on("message", (msg) => {
+    console.log("RAW MESSAGE:", msg.toString());
+  });
 
-  try {
-    const url = new URL(request.url, "http://localhost");
-    const token = url.searchParams.get("token");
-
-    if (!token) {
-      console.error("Missing token");
-      ws.send(JSON.stringify({ type: "auth_error", msg: "missing token" }));
-      ws.close();
-      return;
-    }
-
-    let tokenPayload;
-    try {
-      tokenPayload = verifyAccessToken(token);
-    } catch (err) {
-      console.error("Invalid token:", err);
-      ws.send(JSON.stringify({ type: "auth_error", msg: "invalid token" }));
-      ws.close();
-      return;
-    }
-
-    const user = await userRepo.findById(tokenPayload.sub);
-    if (!user) {
-      console.error("Invalid token user:", tokenPayload.sub);
-      ws.send(JSON.stringify({ type: "auth_error", msg: "unknown user" }));
-      ws.close();
-      return;
-    }
-
-    ws.user = user;
-    ws.tokenExpMs = tokenPayload.exp ? tokenPayload.exp * 1000 : null;
-    socketId = await registry.register(ws, ws.user);
-    ws.socketId = socketId;
-    ws.send(JSON.stringify({ type: "auth_success" }));
-    console.log("WS CONNECTED:", tokenPayload.usr);
-
-    if (ws.tokenExpMs) {
-      const closeAfterMs = ws.tokenExpMs - Date.now();
-      if (closeAfterMs <= 0) {
-        ws.close(4001, "token expired");
-        return;
-      }
-
-      tokenExpiryTimer = setTimeout(() => {
-        ws.close(4001, "token expired");
-      }, closeAfterMs);
-      tokenExpiryTimer.unref();
-    }
-  } catch (err) {
-    console.error("💥 CONNECTION ERROR:", err);
-    ws.close();
-    return;
-  }
-
-  ws.on("message", async (msg) => {
-    try {
-      const data = JSON.parse(msg.toString());
-      console.log("WS EVENT:", data);
-
-      await registry.refreshUserPresence(socketId);
-      await handleClientEvent({
-        registry,
-        socketId,
-        payload: data,
-        ensureConversationSubscribed: subscribeConversationChannel
-      });
-    } catch (err) {
-      console.error("💥 WS MESSAGE ERROR:", err);
-      if (socketId) {
-        registry.sendToSocket(socketId, {
-          type: "error",
-          code: "invalid_message",
-          msg: err.message || "Invalid message"
-        });
-      }
-    }
+  ws.on("close", (code, reason) => {
+    console.log("WS CLOSED:", code, reason.toString());
   });
 
   ws.on("error", (err) => {
-    console.error("💥 WS SOCKET ERROR:", err);
-  });
-
-  ws.on("close", async (code, reason) => {
-    try {
-      console.log("WS CLOSED:", code, reason.toString());
-      if (tokenExpiryTimer) {
-        clearTimeout(tokenExpiryTimer);
-      }
-      if (socketId) {
-        await registry.unregister(socketId);
-      }
-    } catch (err) {
-      console.error("💥 WS CLOSE ERROR:", err);
-    }
-  });
-
-  ws.on("pong", async () => {
-    try {
-      if (socketId) {
-        registry.markPong(socketId);
-        await registry.refreshUserPresence(socketId);
-      }
-    } catch (err) {
-      console.error("💥 WS PONG ERROR:", err);
-    }
+    console.error("WS ERROR:", err);
   });
 });
 
