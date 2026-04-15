@@ -65,6 +65,7 @@ server.on("upgrade", async (req, socket, head) => {
 });
 
 wss.on("connection", async (ws, req) => {
+  console.log("WS CONNECTED");
   let authTimer = setTimeout(() => {
     ws.close(4001, "auth timeout");
   }, 5000);
@@ -112,6 +113,7 @@ wss.on("connection", async (ws, req) => {
   ws.on("message", async (raw) => {
     try {
       const payload = JSON.parse(raw.toString("utf8"));
+      console.log("WS EVENT:", payload);
 
       if (!socketId) {
         const authToken = payload?.type === "auth" ? payload.jwt : queryToken;
@@ -138,6 +140,7 @@ wss.on("connection", async (ws, req) => {
         ensureConversationSubscribed: subscribeConversationChannel
       });
     } catch (error) {
+      console.error("💥 WS MESSAGE ERROR:", error);
       if (socketId) {
         registry.sendToSocket(socketId, {
           type: "error",
@@ -148,18 +151,31 @@ wss.on("connection", async (ws, req) => {
     }
   });
 
-  ws.on("close", async () => {
-    if (authTimer) clearTimeout(authTimer);
-    if (tokenExpiryTimer) clearTimeout(tokenExpiryTimer);
-    if (socketId) {
-      await registry.unregister(socketId);
+  ws.on("error", (error) => {
+    console.error("💥 WS SOCKET ERROR:", error);
+  });
+
+  ws.on("close", async (code, reason) => {
+    try {
+      console.log("WS CLOSED:", code, reason.toString());
+      if (authTimer) clearTimeout(authTimer);
+      if (tokenExpiryTimer) clearTimeout(tokenExpiryTimer);
+      if (socketId) {
+        await registry.unregister(socketId);
+      }
+    } catch (error) {
+      console.error("💥 WS CLOSE ERROR:", error);
     }
   });
 
   ws.on("pong", async () => {
-    if (socketId) {
-      registry.markPong(socketId);
-      await registry.refreshUserPresence(socketId);
+    try {
+      if (socketId) {
+        registry.markPong(socketId);
+        await registry.refreshUserPresence(socketId);
+      }
+    } catch (error) {
+      console.error("💥 WS PONG ERROR:", error);
     }
   });
 });
