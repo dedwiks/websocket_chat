@@ -1,7 +1,7 @@
-const db = require("../infra/postgres");
+const pool = require("../infra/postgres");
 
 async function createUser({ username, passwordHash }) {
-  const result = await db.query(
+  const result = await pool.query(
     `INSERT INTO users (username, password_hash)
      VALUES ($1, $2)
      RETURNING id, username, password_hash AS "passwordHash", created_at AS "createdAt"`,
@@ -11,7 +11,7 @@ async function createUser({ username, passwordHash }) {
 }
 
 async function findByUsername(username) {
-  const result = await db.query(
+  const result = await pool.query(
     `SELECT id, username, password_hash AS "passwordHash", created_at AS "createdAt"
      FROM users
      WHERE username = $1`,
@@ -21,7 +21,7 @@ async function findByUsername(username) {
 }
 
 async function findById(userId) {
-  const result = await db.query(
+  const result = await pool.query(
     `SELECT id, username, created_at AS "createdAt"
      FROM users
      WHERE id = $1`,
@@ -31,7 +31,7 @@ async function findById(userId) {
 }
 
 async function searchByUsernameLike(query, limit = 20) {
-  const result = await db.query(
+  const result = await pool.query(
     `SELECT id, username, created_at AS "createdAt"
      FROM users
      WHERE username ILIKE $1

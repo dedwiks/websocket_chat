@@ -1,4 +1,4 @@
-const db = require("../infra/postgres");
+const pool = require("../infra/postgres");
 
 function normalizePair(userA, userB) {
   return [userA, userB].sort((a, b) => a.localeCompare(b));
@@ -6,7 +6,7 @@ function normalizePair(userA, userB) {
 
 async function findDirectConversation(userA, userB) {
   const [user1, user2] = normalizePair(userA, userB);
-  const result = await db.query(
+  const result = await pool.query(
     `SELECT id, user1_id AS "user1Id", user2_id AS "user2Id", created_at AS "createdAt"
      FROM conversations
      WHERE user1_id = $1 AND user2_id = $2`,
@@ -22,7 +22,7 @@ async function findOrCreateDirectConversation(userA, userB) {
   }
 
   const [user1, user2] = normalizePair(userA, userB);
-  const result = await db.query(
+  const result = await pool.query(
     `INSERT INTO conversations (user1_id, user2_id)
      VALUES ($1, $2)
      ON CONFLICT DO NOTHING
@@ -38,7 +38,7 @@ async function findOrCreateDirectConversation(userA, userB) {
 }
 
 async function ensureMember(conversationId, userId) {
-  const result = await db.query(
+  const result = await pool.query(
     `SELECT 1
      FROM conversations
      WHERE id = $1 AND ($2 = user1_id OR $2 = user2_id)`,

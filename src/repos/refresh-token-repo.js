@@ -1,7 +1,7 @@
-const db = require("../infra/postgres");
+const pool = require("../infra/postgres");
 
 async function createRefreshToken({ userId, tokenHash, expiresAt }) {
-  const result = await db.query(
+  const result = await pool.query(
     `INSERT INTO refresh_tokens (user_id, token_hash, expires_at)
      VALUES ($1, $2, $3)
      RETURNING id, user_id AS "userId", expires_at AS "expiresAt", revoked_at AS "revokedAt"`,
@@ -11,7 +11,7 @@ async function createRefreshToken({ userId, tokenHash, expiresAt }) {
 }
 
 async function updateTokenHash(tokenId, tokenHash) {
-  await db.query(
+  await pool.query(
     `UPDATE refresh_tokens
      SET token_hash = $2
      WHERE id = $1`,
@@ -20,7 +20,7 @@ async function updateTokenHash(tokenId, tokenHash) {
 }
 
 async function findActiveById(tokenId) {
-  const result = await db.query(
+  const result = await pool.query(
     `SELECT id, user_id AS "userId", token_hash AS "tokenHash", expires_at AS "expiresAt", revoked_at AS "revokedAt"
      FROM refresh_tokens
      WHERE id = $1`,
@@ -30,7 +30,7 @@ async function findActiveById(tokenId) {
 }
 
 async function revoke(tokenId) {
-  await db.query(
+  await pool.query(
     `UPDATE refresh_tokens
      SET revoked_at = NOW()
      WHERE id = $1`,

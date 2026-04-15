@@ -1,7 +1,7 @@
-const db = require("../infra/postgres");
+const pool = require("../infra/postgres");
 
 async function createMessage({ conversationId, senderId, clientId, content }) {
-  const result = await db.query(
+  const result = await pool.query(
     `INSERT INTO messages (conversation_id, sender_id, client_id, content)
      VALUES ($1, $2, $3, $4)
      ON CONFLICT (sender_id, client_id)
@@ -27,7 +27,7 @@ async function listMessages({ conversationId, beforeTs, limit }) {
     whereClause += ` AND timestamp < $${params.length}`;
   }
 
-  const result = await db.query(
+  const result = await pool.query(
     `SELECT
        id,
        client_id AS "clientId",
