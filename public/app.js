@@ -118,13 +118,13 @@
 
   function updateConnState(status) {
     if (status === "connecting") {
-      UI.connIndicator.className = "w-2 h-2 rounded-full bg-error shadow-[0_0_8px_#ff716c] animate-pulse";
+      UI.connIndicator.className = "h-2.5 w-2.5 rounded-full bg-primary";
       UI.connStatusText.textContent = "Connecting...";
     } else if (status === "online") {
-      UI.connIndicator.className = "w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_#3bbffa]";
+      UI.connIndicator.className = "h-2.5 w-2.5 rounded-full bg-primary";
       UI.connStatusText.textContent = "Online";
     } else {
-      UI.connIndicator.className = "w-2 h-2 rounded-full bg-error shadow-[0_0_8px_#ff716c]";
+      UI.connIndicator.className = "h-2.5 w-2.5 rounded-full bg-on-surface-variant";
       UI.connStatusText.textContent = "Offline";
     }
   }

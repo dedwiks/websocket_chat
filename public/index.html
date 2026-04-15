@@ -1,220 +1,186 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html lang="en">
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>chatbase | Advanced Chat</title>
+    <title>chatbase</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script id="tailwind-config">
         tailwind.config = {
-            darkMode: "class",
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#3bbffa",
-                        "primary-container": "#22b1ec",
-                        "on-primary-container": "#002b3d",
-                        "on-primary": "#00374d",
-                        "secondary-container": "#3c475a",
-                        "surface": "#060e20",
-                        "surface-container": "#0f1930",
-                        "surface-container-low": "#091328",
-                        "surface-container-highest": "#192540",
-                        "surface-bright": "#1f2b49",
-                        "on-surface": "#dee5ff",
-                        "on-surface-variant": "#a3aac4",
-                        "outline-variant": "#40485d",
-                        "error": "#ff716c",
-                        "error-container": "#9f0519",
-                        "on-error-container": "#ffa8a3"
+                        primary: "#0f766e",
+                        "primary-container": "#ccfbf1",
+                        "on-primary-container": "#134e4a",
+                        surface: "#f3f4f6",
+                        "surface-container": "#ffffff",
+                        "surface-container-low": "#f9fafb",
+                        "surface-container-highest": "#ffffff",
+                        "surface-bright": "#ffffff",
+                        "on-surface": "#111827",
+                        "on-surface-variant": "#6b7280",
+                        "outline-variant": "#d1d5db",
+                        error: "#b91c1c",
+                        "error-container": "#fef2f2",
+                        "on-error-container": "#991b1b"
                     },
                     fontFamily: {
-                        headline: ["Manrope"],
-                        body: ["Inter"]
+                        sans: ["IBM Plex Sans", "sans-serif"],
+                        headline: ["IBM Plex Sans", "sans-serif"],
+                        body: ["IBM Plex Sans", "sans-serif"]
                     }
                 }
             }
         };
     </script>
     <style>
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 20; }
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #192540; border-radius: 10px; }
-        .glass-panel {
-            background: rgba(25, 37, 64, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
+        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 999px; border: 2px solid transparent; background-clip: padding-box; }
     </style>
 </head>
-<body class="bg-surface font-body text-on-surface flex h-screen w-screen overflow-hidden selection:bg-primary/30 selection:text-primary">
-    <div id="login-view" class="flex items-center justify-center w-full h-full relative z-10">
-        <div class="fixed inset-0 overflow-hidden pointer-events-none">
-            <div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]"></div>
-            <div class="absolute -bottom-[10%] -right-[10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[150px]"></div>
-        </div>
-        <main class="relative w-full max-w-md z-10">
-            <div class="flex flex-col items-center mb-8">
-                <div class="mb-4">
-                    <span class="material-symbols-outlined text-5xl text-primary font-bold" style="font-variation-settings: 'FILL' 1;">forum</span>
+<body class="bg-surface font-sans text-on-surface min-h-screen">
+    <div id="login-view" class="min-h-screen flex items-center justify-center px-6 py-16">
+        <main class="w-full max-w-md space-y-8">
+            <header class="space-y-2 text-center">
+                <h1 class="text-3xl font-semibold tracking-tight">chatbase</h1>
+                <p class="text-sm text-on-surface-variant">Sign in to your workspace.</p>
+            </header>
+
+            <section class="bg-surface-container border border-outline-variant rounded-xl p-8">
+                <div class="space-y-1 mb-8">
+                    <h2 class="text-xl font-semibold">Login</h2>
+                    <p class="text-sm text-on-surface-variant">Enter your account details to continue.</p>
                 </div>
-                <h1 class="font-headline text-3xl font-black text-on-surface tracking-widest lowercase">chatbase</h1>
-                <p class="text-on-surface-variant text-sm font-medium mt-1">Sign in to your chat workspace</p>
-            </div>
-            <div class="glass-panel p-8 rounded-xl shadow-[0_32px_64px_-12px_rgba(59,191,250,0.06)] border-t border-white/5">
-                <div class="mb-8">
-                    <h2 class="font-headline text-2xl font-bold text-on-surface">Welcome back</h2>
-                    <p class="text-on-surface-variant text-sm mt-2">Sign in to continue chatting in real time</p>
-                </div>
+
                 <form id="login-form" class="space-y-6">
                     <div class="space-y-2">
-                        <label class="block text-xs font-bold text-primary tracking-widest uppercase ml-1">Username</label>
-                        <div class="relative group">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-on-surface-variant group-focus-within:text-primary transition-colors">
-                                <span class="material-symbols-outlined text-lg">alternate_email</span>
-                            </div>
-                            <input id="username" class="w-full bg-surface-container-highest border-none text-on-surface placeholder:text-on-surface-variant/40 rounded-lg py-3.5 pl-12 pr-4 focus:ring-0 transition-all font-body" placeholder="username" required type="text"/>
-                            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-primary group-focus-within:w-full transition-all duration-300"></div>
-                        </div>
+                        <label class="block text-sm font-medium" for="username">Username</label>
+                        <input id="username" class="w-full rounded-lg border border-outline-variant bg-white px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant focus:border-primary focus:ring-2 focus:ring-primary/15" placeholder="Username" required type="text"/>
                     </div>
+
                     <div class="space-y-2">
-                        <label class="block text-xs font-bold text-primary tracking-widest uppercase ml-1">Password</label>
-                        <div class="relative group">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-on-surface-variant group-focus-within:text-primary transition-colors">
-                                <span class="material-symbols-outlined text-lg">lock</span>
-                            </div>
-                            <input id="password" class="w-full bg-surface-container-highest border-none text-on-surface placeholder:text-on-surface-variant/40 rounded-lg py-3.5 pl-12 pr-12 focus:ring-0 transition-all font-body" placeholder="Enter your password" required type="password"/>
-                            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-primary group-focus-within:w-full transition-all duration-300"></div>
-                        </div>
+                        <label class="block text-sm font-medium" for="password">Password</label>
+                        <input id="password" class="w-full rounded-lg border border-outline-variant bg-white px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant focus:border-primary focus:ring-2 focus:ring-primary/15" placeholder="Password" required type="password"/>
                     </div>
-                    <div id="login-error" class="hidden items-start bg-error-container/10 p-3 rounded-lg border border-error-container/20">
-                        <span class="material-symbols-outlined text-error text-lg mr-2">error</span>
-                        <p id="login-error-text" class="text-xs text-on-error-container font-medium">Invalid credentials detected.</p>
+
+                    <div id="login-error" class="hidden items-start gap-2 rounded-lg border border-error/15 bg-error-container px-4 py-3">
+                        <span class="material-symbols-outlined text-error text-base">error</span>
+                        <p id="login-error-text" class="text-sm text-on-error-container">Invalid credentials detected.</p>
                     </div>
+
                     <div class="space-y-3 pt-2">
-                        <button type="submit" class="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary-container font-headline font-bold py-4 rounded-xl shadow-[0_8px_24px_rgba(59,191,250,0.2)] hover:shadow-[0_12px_32px_rgba(59,191,250,0.3)] transition-all active:scale-95">
+                        <button type="submit" class="w-full rounded-lg bg-primary px-4 py-3 text-sm font-medium text-white hover:bg-[#0b5c56] focus:outline-none focus:ring-2 focus:ring-primary/20">
                             Login
                         </button>
-                        <a id="register-btn" href="/register" class="block w-full text-center bg-transparent text-on-surface font-headline font-bold py-4 rounded-xl border border-outline-variant/20 hover:bg-surface-container-highest transition-all active:scale-95">
-                            Register
+                        <a id="register-btn" href="/register" class="block w-full rounded-lg border border-outline-variant px-4 py-3 text-center text-sm font-medium text-on-surface hover:bg-surface">
+                            Create an account
                         </a>
                     </div>
                 </form>
-            </div>
-            <footer class="mt-8 text-center">
-                <p class="text-on-surface-variant text-[10px] tracking-[0.2em] uppercase opacity-50 font-medium">chatbase real-time messaging</p>
-            </footer>
+            </section>
         </main>
     </div>
 
-    <div id="chat-view" class="hidden w-full h-full flex flex-row">
-        <aside class="h-screen w-72 flex-shrink-0 flex flex-col bg-[#0f1930] shadow-none z-20">
-            <div class="p-6 flex flex-col gap-4">
-                <div class="flex items-center justify-between">
-                    <span class="text-2xl font-black text-[#38bdf8] lowercase tracking-widest">chatbase</span>
-                    <div class="flex items-center gap-3">
-                        <div id="connection-indicator" class="w-2 h-2 rounded-full bg-error shadow-[0_0_8px_#ff716c]"></div>
-                        <span id="connection-status-text" class="text-xs font-headline font-bold text-on-surface-variant tracking-tight uppercase">Offline</span>
-                        <button id="logout-btn" type="button" class="text-xs font-headline font-bold uppercase tracking-wide text-on-surface-variant hover:text-primary transition-colors">
-                            Back to login
-                        </button>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3 p-3 bg-[#192540] rounded-xl">
-                    <div class="w-10 h-10 rounded-lg bg-surface flex items-center justify-center font-bold text-primary uppercase" id="my-avatar">A</div>
-                    <div class="flex flex-col">
-                        <span id="my-username" class="font-headline font-bold text-sm">...</span>
-                        <span class="text-xs text-on-surface-variant">Connected User</span>
-                    </div>
-                </div>
-            </div>
+    <div id="chat-view" class="hidden min-h-screen">
+        <div class="mx-auto flex min-h-screen max-w-[1440px]">
+            <aside class="w-full max-w-[320px] border-r border-outline-variant bg-surface-container">
+                <div class="flex h-full flex-col">
+                    <div class="space-y-6 border-b border-outline-variant px-6 py-6">
+                        <div class="flex items-center justify-between gap-4">
+                            <div>
+                                <h1 class="text-xl font-semibold tracking-tight">chatbase</h1>
+                                <p class="mt-1 text-sm text-on-surface-variant">Team messaging</p>
+                            </div>
+                            <button id="logout-btn" type="button" class="text-sm font-medium text-primary hover:underline">
+                                Back to login
+                            </button>
+                        </div>
 
-            <div class="px-6 pb-2">
-                <div class="relative group">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm group-focus-within:text-primary transition-colors">search</span>
-                    <input id="user-search" class="w-full bg-surface-container-highest/50 border-none rounded-lg py-2 pl-9 pr-4 text-sm font-body text-on-surface placeholder:text-on-surface-variant/50 focus:ring-1 focus:ring-primary/50 transition-all outline-none" placeholder="Search users..." type="text"/>
-                </div>
-                <div id="search-results" class="hidden absolute w-56 mt-2 bg-surface-bright rounded-lg shadow-xl z-50 p-2 space-y-1"></div>
-            </div>
+                        <div class="flex items-center gap-3 rounded-lg border border-outline-variant px-4 py-4">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-container text-sm font-semibold text-on-primary-container" id="my-avatar">A</div>
+                            <div class="min-w-0 flex-1">
+                                <div id="my-username" class="truncate text-sm font-medium">...</div>
+                                <div class="mt-1 flex items-center gap-2 text-sm text-on-surface-variant">
+                                    <span id="connection-indicator" class="h-2.5 w-2.5 rounded-full bg-on-surface-variant"></span>
+                                    <span id="connection-status-text">Offline</span>
+                                </div>
+                            </div>
+                        </div>
 
-            <nav class="flex flex-col flex-grow overflow-y-auto">
-                <div class="px-4 py-2 mt-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em]">Conversations</div>
-                <div id="sidebar-conversations-list" class="flex flex-col gap-1 px-2"></div>
-            </nav>
-        </aside>
-
-        <main class="flex-grow flex flex-col relative bg-surface">
-            <header class="w-full h-16 flex items-center justify-between px-8 border-b border-[#40485d]/20 bg-[#060e20] z-10">
-                <div class="flex items-center gap-4" id="chat-header-info" style="visibility: hidden;">
-                    <div class="relative">
-                        <div id="active-chat-avatar" class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container font-headline font-bold flex flex-col items-center justify-center text-lg uppercase">?</div>
-                    </div>
-                    <div>
-                        <h1 id="active-chat-name" class="text-xl font-bold text-[#dee5ff] font-headline">Select a Chat</h1>
-                        <div class="flex items-center gap-2">
-                            <span id="active-chat-typing" class="hidden text-[10px] text-primary italic font-semibold">typing...</span>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium" for="user-search">Search users</label>
+                            <div class="relative">
+                                <input id="user-search" class="w-full rounded-lg border border-outline-variant bg-white px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant focus:border-primary focus:ring-2 focus:ring-primary/15" placeholder="Search by username" type="text"/>
+                                <div id="search-results" class="hidden absolute left-0 right-0 top-full z-50 mt-2 rounded-lg border border-outline-variant bg-white p-2"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </header>
 
-            <div id="chat-messages-container" class="flex-grow overflow-y-auto p-8 space-y-6 scroll-smooth flex flex-col">
-                <div class="m-auto text-sm text-on-surface-variant">Select a user or search to start a direct connection.</div>
-            </div>
-
-            <footer id="chat-input-area" class="sticky bottom-0 w-full bg-[#060e20] p-4 z-10 opacity-50 pointer-events-none">
-                <form id="message-form" class="max-w-4xl mx-auto flex items-center gap-4 bg-[#192540] rounded-2xl p-2 px-4 shadow-[0_-8px_32px_rgba(59,191,250,0.06)] relative group">
-                    <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-focus-within:w-full"></div>
-                    <input id="message-input" autocomplete="off" class="flex-grow bg-transparent border-none text-on-surface placeholder:text-on-surface-variant/50 focus:ring-0 py-4 text-sm font-body outline-none" placeholder="Type a message..." type="text"/>
-                    <div class="flex items-center gap-2">
-                        <button type="submit" class="bg-[#38bdf8] text-white rounded-full p-3 shadow-[0_0_15px_rgba(56,189,248,0.4)] hover:scale-105 active:scale-90 transition-all font-headline font-bold disabled:opacity-50 flex items-center justify-center" id="send-btn">
-                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>
-                        </button>
+                    <div class="flex-1 overflow-y-auto px-4 py-6">
+                        <div class="mb-3 text-sm font-medium text-on-surface-variant">Conversations</div>
+                        <div id="sidebar-conversations-list" class="space-y-1"></div>
                     </div>
-                </form>
-            </footer>
-        </main>
+                </div>
+            </aside>
+
+            <main class="flex min-w-0 flex-1 flex-col bg-surface">
+                <header class="border-b border-outline-variant bg-surface px-8 py-5">
+                    <div class="flex items-center gap-4" id="chat-header-info" style="visibility: hidden;">
+                        <div id="active-chat-avatar" class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-container text-sm font-semibold text-on-primary-container">?</div>
+                        <div class="min-w-0">
+                            <h2 id="active-chat-name" class="truncate text-lg font-semibold">Select a chat</h2>
+                            <p id="active-chat-typing" class="hidden text-sm text-on-surface-variant">Typing...</p>
+                        </div>
+                    </div>
+                </header>
+
+                <div id="chat-messages-container" class="flex flex-1 flex-col gap-4 overflow-y-auto px-8 py-8">
+                    <div class="m-auto text-sm text-on-surface-variant">Select a user or search to start a direct conversation.</div>
+                </div>
+
+                <footer id="chat-input-area" class="border-t border-outline-variant bg-surface px-8 py-6 opacity-50 pointer-events-none">
+                    <form id="message-form" class="mx-auto flex max-w-4xl items-center gap-3">
+                        <input id="message-input" autocomplete="off" class="min-w-0 flex-1 rounded-lg border border-outline-variant bg-white px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant focus:border-primary focus:ring-2 focus:ring-primary/15" placeholder="Write a message" type="text"/>
+                        <button type="submit" class="rounded-lg bg-primary px-5 py-3 text-sm font-medium text-white hover:bg-[#0b5c56] focus:outline-none focus:ring-2 focus:ring-primary/20" id="send-btn">
+                            Send
+                        </button>
+                    </form>
+                </footer>
+            </main>
+        </div>
     </div>
 
     <template id="tpl-incoming-msg">
-        <div class="flex gap-4 max-w-2xl">
-            <div class="w-8 h-8 rounded-full self-end bg-surface-container-highest text-on-surface flex items-center justify-center text-xs font-bold uppercase avatar-placeholder">U</div>
-            <div class="flex flex-col gap-1">
-                <div class="bg-surface-container-low text-on-surface p-4 rounded-2xl rounded-bl-sm shadow-sm message-bubble">
-                    <p class="text-sm leading-relaxed message-text"></p>
-                </div>
-                <span class="text-[10px] text-on-surface-variant ml-1 message-time"></span>
+        <div class="max-w-3xl">
+            <div class="rounded-lg border border-outline-variant bg-white px-4 py-3 message-bubble">
+                <p class="message-text text-sm leading-6"></p>
             </div>
+            <span class="message-time mt-2 block text-xs text-on-surface-variant"></span>
         </div>
     </template>
 
     <template id="tpl-outgoing-msg">
-        <div class="flex gap-4 max-w-2xl ml-auto flex-row-reverse" id="msg-">
-            <div class="w-8 h-8 rounded-full self-end bg-primary-container text-on-primary-container flex items-center justify-center text-xs font-bold uppercase avatar-placeholder">M</div>
-            <div class="flex flex-col gap-1 items-end">
-                <div class="bg-primary-container text-on-primary-container p-4 rounded-2xl rounded-br-sm shadow-sm message-bubble opacity-80 transation-opacity duration-300">
-                    <p class="text-sm leading-relaxed font-medium message-text"></p>
-                </div>
-                <span class="text-[10px] text-on-surface-variant mr-1 flex items-center gap-1 message-time-status">
-                    <span class="message-time"></span>
-                    <span class="material-symbols-outlined text-[12px] text-on-surface-variant msg-status-icon">schedule</span>
-                </span>
+        <div class="ml-auto max-w-3xl" id="msg-">
+            <div class="rounded-lg bg-primary px-4 py-3 text-white message-bubble opacity-80">
+                <p class="message-text text-sm leading-6"></p>
             </div>
+            <span class="message-time-status mt-2 flex items-center justify-end gap-1 text-xs text-on-surface-variant">
+                <span class="message-time"></span>
+                <span class="material-symbols-outlined text-sm msg-status-icon">schedule</span>
+            </span>
         </div>
     </template>
 
     <template id="tpl-convo-list-item">
-        <div class="flex items-center gap-3 p-3 hover:bg-surface-container-highest/60 rounded-xl cursor-pointer transition-all conversation-item">
-            <div class="relative">
-                <div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center font-bold uppercase convo-icon">U</div>
-            </div>
-            <div class="flex-grow min-w-0">
-                <div class="flex justify-between items-baseline">
-                    <span class="text-sm font-headline font-bold truncate convo-name">User</span>
-                </div>
+        <div class="conversation-item flex items-center gap-3 rounded-lg px-3 py-3 cursor-pointer hover:bg-surface">
+            <div class="convo-icon flex h-9 w-9 items-center justify-center rounded-full bg-primary-container text-sm font-semibold text-on-primary-container">U</div>
+            <div class="min-w-0 flex-1">
+                <span class="convo-name block truncate text-sm font-medium">User</span>
             </div>
         </div>
     </template>
