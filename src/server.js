@@ -1,3 +1,9 @@
+console.log("==== ENV DEBUG START ====");
+console.log("DATABASE_URL:", process.env.DATABASE_URL);
+console.log("NODE_ENV:", process.env.NODE_ENV);
+console.log("All ENV keys:", Object.keys(process.env));
+console.log("==== ENV DEBUG END ====");
+
 const http = require("node:http");
 const { URL } = require("node:url");
 const { WebSocketServer } = require("ws");
