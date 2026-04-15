@@ -216,11 +216,8 @@
 
     updateConnState("connecting");
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    state.socket = new WebSocket(`${protocol}//${window.location.host}/ws`);
-
-    state.socket.onopen = () => {
-      state.socket.send(JSON.stringify({ type: "auth", jwt: state.accessToken }));
-    };
+    const token = encodeURIComponent(state.accessToken);
+    state.socket = new WebSocket(`${protocol}//${window.location.host}/ws?token=${token}`);
 
     state.socket.onmessage = async (event) => {
       const payload = JSON.parse(event.data);
