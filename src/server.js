@@ -204,7 +204,7 @@ async function start() {
   heartbeat.unref();
 
   server.listen(config.port, () => {
-    console.log(`chat service listening on port ${config.port}`);
+    console.log(`chatbase listening on port ${config.port}`);
   });
 }
 

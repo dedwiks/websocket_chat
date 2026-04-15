@@ -24,6 +24,8 @@ const validators = compile(httpSchemas);
 
 const staticFiles = {
   "/": { file: path.join(__dirname, "../../public/index.html"), contentType: "text/html; charset=utf-8" },
+  "/register": { file: path.join(__dirname, "../../public/register.html"), contentType: "text/html; charset=utf-8" },
+  "/register.html": { file: path.join(__dirname, "../../public/register.html"), contentType: "text/html; charset=utf-8" },
   "/app.js": { file: path.join(__dirname, "../../public/app.js"), contentType: "text/javascript; charset=utf-8" }
 };
 

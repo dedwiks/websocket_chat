@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>NeonPulse | Advanced Chat</title>
+    <title>chatbase | Advanced Chat</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -18,7 +18,6 @@
                         "on-primary-container": "#002b3d",
                         "on-primary": "#00374d",
                         "secondary-container": "#3c475a",
-                        "tertiary": "#c180ff",
                         "surface": "#060e20",
                         "surface-container": "#0f1930",
                         "surface-container-low": "#091328",
@@ -52,25 +51,23 @@
     </style>
 </head>
 <body class="bg-surface font-body text-on-surface flex h-screen w-screen overflow-hidden selection:bg-primary/30 selection:text-primary">
-
-    <!-- LOGIN VIEW -->
     <div id="login-view" class="flex items-center justify-center w-full h-full relative z-10">
         <div class="fixed inset-0 overflow-hidden pointer-events-none">
             <div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]"></div>
-            <div class="absolute -bottom-[10%] -right-[10%] w-[50%] h-[50%] bg-tertiary/5 rounded-full blur-[150px]"></div>
+            <div class="absolute -bottom-[10%] -right-[10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[150px]"></div>
         </div>
         <main class="relative w-full max-w-md z-10">
             <div class="flex flex-col items-center mb-8">
                 <div class="mb-4">
-                    <span class="material-symbols-outlined text-5xl text-primary font-bold" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                    <span class="material-symbols-outlined text-5xl text-primary font-bold" style="font-variation-settings: 'FILL' 1;">forum</span>
                 </div>
-                <h1 class="font-headline text-3xl font-black text-on-surface tracking-widest uppercase">NeonPulse</h1>
-                <p class="text-on-surface-variant text-sm font-medium mt-1">THE SYNTHETIC HORIZON</p>
+                <h1 class="font-headline text-3xl font-black text-on-surface tracking-widest lowercase">chatbase</h1>
+                <p class="text-on-surface-variant text-sm font-medium mt-1">Sign in to your chat workspace</p>
             </div>
             <div class="glass-panel p-8 rounded-xl shadow-[0_32px_64px_-12px_rgba(59,191,250,0.06)] border-t border-white/5">
                 <div class="mb-8">
                     <h2 class="font-headline text-2xl font-bold text-on-surface">Welcome back</h2>
-                    <p class="text-on-surface-variant text-sm mt-2">Sign in to your secure communication terminal</p>
+                    <p class="text-on-surface-variant text-sm mt-2">Sign in to continue chatting in real time</p>
                 </div>
                 <form id="login-form" class="space-y-6">
                     <div class="space-y-2">
@@ -79,7 +76,7 @@
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-on-surface-variant group-focus-within:text-primary transition-colors">
                                 <span class="material-symbols-outlined text-lg">alternate_email</span>
                             </div>
-                            <input id="username" class="w-full bg-surface-container-highest border-none text-on-surface placeholder:text-on-surface-variant/40 rounded-lg py-3.5 pl-12 pr-4 focus:ring-0 transition-all font-body" placeholder="identity_tag" required type="text"/>
+                            <input id="username" class="w-full bg-surface-container-highest border-none text-on-surface placeholder:text-on-surface-variant/40 rounded-lg py-3.5 pl-12 pr-4 focus:ring-0 transition-all font-body" placeholder="username" required type="text"/>
                             <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-primary group-focus-within:w-full transition-all duration-300"></div>
                         </div>
                     </div>
@@ -89,7 +86,7 @@
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-on-surface-variant group-focus-within:text-primary transition-colors">
                                 <span class="material-symbols-outlined text-lg">lock</span>
                             </div>
-                            <input id="password" class="w-full bg-surface-container-highest border-none text-on-surface placeholder:text-on-surface-variant/40 rounded-lg py-3.5 pl-12 pr-12 focus:ring-0 transition-all font-body" placeholder="••••••••" required type="password"/>
+                            <input id="password" class="w-full bg-surface-container-highest border-none text-on-surface placeholder:text-on-surface-variant/40 rounded-lg py-3.5 pl-12 pr-12 focus:ring-0 transition-all font-body" placeholder="Enter your password" required type="password"/>
                             <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-primary group-focus-within:w-full transition-all duration-300"></div>
                         </div>
                     </div>
@@ -101,62 +98,55 @@
                         <button type="submit" class="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary-container font-headline font-bold py-4 rounded-xl shadow-[0_8px_24px_rgba(59,191,250,0.2)] hover:shadow-[0_12px_32px_rgba(59,191,250,0.3)] transition-all active:scale-95">
                             Login
                         </button>
-                        <button id="register-btn" type="button" class="w-full bg-transparent text-on-surface font-headline font-bold py-4 rounded-xl border border-outline-variant/20 hover:bg-surface-container-highest transition-all active:scale-95">
+                        <a id="register-btn" href="/register" class="block w-full text-center bg-transparent text-on-surface font-headline font-bold py-4 rounded-xl border border-outline-variant/20 hover:bg-surface-container-highest transition-all active:scale-95">
                             Register
-                        </button>
+                        </a>
                     </div>
                 </form>
             </div>
             <footer class="mt-8 text-center">
-                <p class="text-on-surface-variant text-[10px] tracking-[0.2em] uppercase opacity-50 font-medium">Encrypted Real-Time Terminal v4.0.2</p>
+                <p class="text-on-surface-variant text-[10px] tracking-[0.2em] uppercase opacity-50 font-medium">chatbase real-time messaging</p>
             </footer>
         </main>
     </div>
 
-    <!-- CHAT VIEW -->
     <div id="chat-view" class="hidden w-full h-full flex flex-row">
-        
-        <!-- SIDEBAR -->
         <aside class="h-screen w-72 flex-shrink-0 flex flex-col bg-[#0f1930] shadow-none z-20">
             <div class="p-6 flex flex-col gap-4">
                 <div class="flex items-center justify-between">
-                    <span class="text-2xl font-black text-[#38bdf8] uppercase tracking-widest">NeonPulse</span>
-                    <div class="flex items-center gap-2">
+                    <span class="text-2xl font-black text-[#38bdf8] lowercase tracking-widest">chatbase</span>
+                    <div class="flex items-center gap-3">
                         <div id="connection-indicator" class="w-2 h-2 rounded-full bg-error shadow-[0_0_8px_#ff716c]"></div>
                         <span id="connection-status-text" class="text-xs font-headline font-bold text-on-surface-variant tracking-tight uppercase">Offline</span>
+                        <button id="logout-btn" type="button" class="text-xs font-headline font-bold uppercase tracking-wide text-on-surface-variant hover:text-primary transition-colors">
+                            Back to login
+                        </button>
                     </div>
                 </div>
                 <div class="flex items-center gap-3 p-3 bg-[#192540] rounded-xl">
                     <div class="w-10 h-10 rounded-lg bg-surface flex items-center justify-center font-bold text-primary uppercase" id="my-avatar">A</div>
                     <div class="flex flex-col">
                         <span id="my-username" class="font-headline font-bold text-sm">...</span>
-                        <span class="text-xs text-on-surface-variant">Connected Node</span>
+                        <span class="text-xs text-on-surface-variant">Connected User</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Global Search Users -->
             <div class="px-6 pb-2">
                 <div class="relative group">
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm group-focus-within:text-primary transition-colors">search</span>
-                    <input id="user-search" class="w-full bg-surface-container-highest/50 border-none rounded-lg py-2 pl-9 pr-4 text-sm font-body text-on-surface placeholder:text-on-surface-variant/50 focus:ring-1 focus:ring-primary/50 transition-all outline-none" placeholder="Search Global Users..." type="text"/>
+                    <input id="user-search" class="w-full bg-surface-container-highest/50 border-none rounded-lg py-2 pl-9 pr-4 text-sm font-body text-on-surface placeholder:text-on-surface-variant/50 focus:ring-1 focus:ring-primary/50 transition-all outline-none" placeholder="Search users..." type="text"/>
                 </div>
-                <div id="search-results" class="hidden absolute w-56 mt-2 bg-surface-bright rounded-lg shadow-xl z-50 p-2 space-y-1">
-                    <!-- Search results here -->
-                </div>
+                <div id="search-results" class="hidden absolute w-56 mt-2 bg-surface-bright rounded-lg shadow-xl z-50 p-2 space-y-1"></div>
             </div>
 
             <nav class="flex flex-col flex-grow overflow-y-auto">
                 <div class="px-4 py-2 mt-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em]">Conversations</div>
-                <div id="sidebar-conversations-list" class="flex flex-col gap-1 px-2">
-                    <!-- Convo templates appended here -->
-                </div>
+                <div id="sidebar-conversations-list" class="flex flex-col gap-1 px-2"></div>
             </nav>
         </aside>
 
-        <!-- MAIN CHAT AREA -->
         <main class="flex-grow flex flex-col relative bg-surface">
-            <!-- HEADER -->
             <header class="w-full h-16 flex items-center justify-between px-8 border-b border-[#40485d]/20 bg-[#060e20] z-10">
                 <div class="flex items-center gap-4" id="chat-header-info" style="visibility: hidden;">
                     <div class="relative">
@@ -171,12 +161,10 @@
                 </div>
             </header>
 
-            <!-- MESSAGES CONTAINER -->
             <div id="chat-messages-container" class="flex-grow overflow-y-auto p-8 space-y-6 scroll-smooth flex flex-col">
                 <div class="m-auto text-sm text-on-surface-variant">Select a user or search to start a direct connection.</div>
             </div>
 
-            <!-- INPUT AREA -->
             <footer id="chat-input-area" class="sticky bottom-0 w-full bg-[#060e20] p-4 z-10 opacity-50 pointer-events-none">
                 <form id="message-form" class="max-w-4xl mx-auto flex items-center gap-4 bg-[#192540] rounded-2xl p-2 px-4 shadow-[0_-8px_32px_rgba(59,191,250,0.06)] relative group">
                     <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-focus-within:w-full"></div>
@@ -191,7 +179,6 @@
         </main>
     </div>
 
-    <!-- TEMPLATES -->
     <template id="tpl-incoming-msg">
         <div class="flex gap-4 max-w-2xl">
             <div class="w-8 h-8 rounded-full self-end bg-surface-container-highest text-on-surface flex items-center justify-center text-xs font-bold uppercase avatar-placeholder">U</div>
