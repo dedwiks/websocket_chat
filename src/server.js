@@ -60,6 +60,33 @@ wss.on("connection", (ws, request) => {
 
         console.log("JOINED ROOM:", cid);
       }
+
+      if (data.type === "message") {
+        const cid = data.cid;
+        const room = rooms.get(cid);
+
+        if (!room) {
+          console.error("Room not found:", cid);
+          return;
+        }
+
+        for (const client of room) {
+          if (client !== ws && client.readyState === 1) {
+            client.send(JSON.stringify({
+              type: "message",
+              cid: cid,
+              msg: data.msg
+            }));
+          }
+        }
+
+        ws.send(JSON.stringify({
+          type: "ack",
+          clid: data.clid
+        }));
+
+        console.log("MESSAGE BROADCASTED:", cid, data.msg);
+      }
     } catch (err) {
       console.error("💥 WS MESSAGE ERROR:", err);
     }
