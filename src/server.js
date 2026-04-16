@@ -15,6 +15,7 @@ const app = route;
 const PORT = config.port;
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ noServer: true });
+const rooms = new Map();
 
 server.on("upgrade", (request, socket, head) => {
   try {
@@ -38,7 +39,30 @@ wss.on("connection", (ws, request) => {
   console.log("WS CONNECTED");
 
   ws.on("message", (msg) => {
-    console.log("RAW MESSAGE:", msg.toString());
+    try {
+      const data = JSON.parse(msg.toString());
+      console.log("WS EVENT:", data);
+
+      if (data.type === "join") {
+        const cid = data.cid;
+
+        if (!cid) {
+          console.error("Missing cid in join");
+          return;
+        }
+
+        if (!rooms.has(cid)) {
+          rooms.set(cid, new Set());
+        }
+
+        rooms.get(cid).add(ws);
+        ws.cid = cid;
+
+        console.log("JOINED ROOM:", cid);
+      }
+    } catch (err) {
+      console.error("💥 WS MESSAGE ERROR:", err);
+    }
   });
 
   ws.on("close", (code) => {
