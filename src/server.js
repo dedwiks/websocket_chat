@@ -54,10 +54,20 @@ wss.on("connection", (ws, request) => {
   console.log("WS CONNECTED USER:", payload.usr);
 
   ws.on("message", async (msg) => {
-    try {
-      const data = JSON.parse(msg.toString());
-      console.log("WS EVENT:", data);
+    console.log("RAW MESSAGE:", msg.toString());
 
+    let data;
+    try {
+      data = JSON.parse(msg.toString());
+      console.log("PARSED DATA:", data);
+    } catch (err) {
+      console.error("JSON PARSE ERROR:", err);
+      return;
+    }
+
+    console.log("MESSAGE TYPE:", data.type);
+
+    try {
       if (data.type === "join") {
         const cid = data.cid;
 
@@ -85,12 +95,20 @@ wss.on("connection", (ws, request) => {
           return;
         }
 
+        console.log("ENTERED MESSAGE BLOCK");
+        console.log("ABOUT TO INSERT:", {
+          cid: data.cid,
+          sender: ws.user?.sub,
+          msg: data.msg
+        });
+
         try {
           await pool.query(
-            `INSERT INTO messages (id, conversation_id, sender_id, content, created_at)
-             VALUES ($1, $2, $3, $4, NOW())`,
+            `INSERT INTO messages (client_id, conversation_id, sender_id, content)
+             VALUES ($1, $2, $3, $4)`,
             [data.clid, data.cid, ws.user.sub, data.msg]
           );
+          console.log("DB INSERT SUCCESS");
         } catch (err) {
           console.error("DB INSERT ERROR:", err);
         }
