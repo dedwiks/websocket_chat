@@ -11,6 +11,7 @@ const WebSocket = require("ws");
 const jwt = require("jsonwebtoken");
 const config = require("./config");
 const { route } = require("./http/router");
+const pool = require("./infra/postgres");
 
 const app = route;
 const PORT = config.port;
@@ -52,7 +53,7 @@ wss.on("connection", (ws, request) => {
   ws.user = payload;
   console.log("WS CONNECTED USER:", payload.usr);
 
-  ws.on("message", (msg) => {
+  ws.on("message", async (msg) => {
     try {
       const data = JSON.parse(msg.toString());
       console.log("WS EVENT:", data);
@@ -82,6 +83,16 @@ wss.on("connection", (ws, request) => {
         if (!room) {
           console.error("Room not found:", cid);
           return;
+        }
+
+        try {
+          await pool.query(
+            `INSERT INTO messages (id, conversation_id, sender_id, content, created_at)
+             VALUES ($1, $2, $3, $4, NOW())`,
+            [data.clid, data.cid, ws.user.sub, data.msg]
+          );
+        } catch (err) {
+          console.error("DB INSERT ERROR:", err);
         }
 
         for (const client of room) {
