@@ -8,6 +8,7 @@ process.on("unhandledRejection", (err) => {
 
 const http = require("node:http");
 const WebSocket = require("ws");
+const jwt = require("jsonwebtoken");
 const config = require("./config");
 const { route } = require("./http/router");
 
@@ -36,7 +37,20 @@ server.on("upgrade", (request, socket, head) => {
 });
 
 wss.on("connection", (ws, request) => {
-  console.log("WS CONNECTED");
+  const url = new URL(request.url, "http://localhost");
+  const token = url.searchParams.get("token");
+
+  let payload;
+  try {
+    payload = jwt.verify(token, process.env.AUTH_TOKEN_SECRET);
+  } catch (err) {
+    console.error("Invalid token:", err);
+    ws.close();
+    return;
+  }
+
+  ws.user = payload;
+  console.log("WS CONNECTED USER:", payload.usr);
 
   ws.on("message", (msg) => {
     try {
