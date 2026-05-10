@@ -152,11 +152,10 @@
     if (state.socket) {
       const socket = state.socket;
       state.socket = null;
-      socket.onclose = null;
       try {
-        socket.close();
+        socket.disconnect();
       } catch (error) {
-        log(`socket close failed: ${error.message}`);
+        log(`socket disconnect failed: ${error.message}`);
       }
     }
 
@@ -186,96 +185,86 @@
   }
 
   function flushQueue() {
-    if (!state.socket || state.socket.readyState !== WebSocket.OPEN) {
+    if (!state.socket || !state.socket.connected) {
       return;
     }
 
     while (state.queue.length > 0) {
-      state.socket.send(state.queue.shift());
+      const item = state.queue.shift();
+      state.socket.emit(item.event, item.payload);
     }
     log("queued messages flushed");
   }
 
-  function sendSocket(payload) {
-    const serialized = JSON.stringify(payload);
-    if (!state.socket || state.socket.readyState !== WebSocket.OPEN) {
-      state.queue.push(serialized);
-      log(`queued offline event: ${payload.type}`);
+  function sendSocket(event, payload) {
+    if (!state.socket || !state.socket.connected) {
+      state.queue.push({ event, payload });
+      log(`queued offline event: ${event}`);
       return;
     }
-    state.socket.send(serialized);
+    state.socket.emit(event, payload);
   }
 
   function connectSocket() {
     if (!state.accessToken) {
       return;
     }
-    if (state.socket && (state.socket.readyState === WebSocket.OPEN || state.socket.readyState === WebSocket.CONNECTING)) {
+    if (state.socket && state.socket.connected) {
       return;
     }
 
     updateConnState("connecting");
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const token = encodeURIComponent(state.accessToken);
-    state.socket = new WebSocket(`${protocol}//${window.location.host}/ws?token=${token}`);
-
-    state.socket.onmessage = async (event) => {
-      const payload = JSON.parse(event.data);
-      log(`recv WS: ${payload.type}`);
-
-      switch (payload.type) {
-        case "auth_success":
-          updateConnState("online");
-          state.reconnectAttempts = 0;
-          flushQueue();
-          if (state.activeConversationId) {
-            sendSocket({ type: "join_conversation", cid: state.activeConversationId });
-          }
-          break;
-        case "auth_error":
-          try {
-            await refreshToken();
-            state.socket.close();
-          } catch (error) {
-            logoutToLogin();
-          }
-          break;
-        case "message":
-          if (payload.cid === state.activeConversationId && payload.uid !== state.user.id) {
-            appendMessage(payload, false);
-          }
-          break;
-        case "message_ack": {
-          const el = document.getElementById(`msg-${payload.client_id}`);
-          if (el) {
-            const bubble = el.querySelector(".message-bubble");
-            bubble.classList.remove("opacity-80");
-            const icon = el.querySelector(".msg-status-icon");
-            icon.textContent = "done_all";
-            icon.classList.add("text-primary");
-            icon.classList.remove("text-on-surface-variant");
-          }
-          break;
-        }
-        case "user_typing":
-          if (payload.cid === state.activeConversationId && payload.uid !== state.user.id) {
-            UI.activeChatTyping.classList.remove("hidden");
-            clearTimeout(state.typingTimeout);
-            state.typingTimeout = setTimeout(() => {
-              UI.activeChatTyping.classList.add("hidden");
-            }, 3000);
-          }
-          break;
-        case "error":
-          log(`server error: ${payload.msg}`);
-          break;
+    state.socket = io({
+      auth: {
+        token: state.accessToken
       }
-    };
+    });
 
-    state.socket.onclose = () => {
+    state.socket.on("connect", () => {
+      updateConnState("online");
+      state.reconnectAttempts = 0;
+      flushQueue();
+      if (state.activeConversationId) {
+        state.socket.emit("join", { cid: state.activeConversationId });
+      }
+    });
+
+    state.socket.on("disconnect", () => {
       updateConnState("offline");
       scheduleReconnect();
-    };
+    });
+
+    state.socket.on("message", (payload) => {
+      log(`recv SOCKET: ${payload.type}`);
+      if (payload.cid === state.activeConversationId) {
+        appendMessage(payload, false);
+      }
+    });
+
+    state.socket.on("ack", (payload) => {
+      const el = document.getElementById(`msg-${payload.clid}`);
+      if (el) {
+        const bubble = el.querySelector(".message-bubble");
+        bubble.classList.remove("opacity-80");
+        const icon = el.querySelector(".msg-status-icon");
+        icon.textContent = "done_all";
+        icon.classList.add("text-primary");
+        icon.classList.remove("text-on-surface-variant");
+      }
+    });
+
+    state.socket.on("connect_error", (error) => {
+      log(`socket connect error: ${error.message}`);
+      if (error.message === "Authentication error") {
+        // Try to refresh token and reconnect
+        refreshToken().then(() => {
+          state.socket.auth.token = state.accessToken;
+          state.socket.connect();
+        }).catch(() => {
+          logoutToLogin();
+        });
+      }
+    });
   }
 
   function appendMessage(data, isOutgoing) {
@@ -319,7 +308,7 @@
     UI.activeChatAvatar.textContent = peerName[0].toUpperCase();
     UI.chatInputArea.classList.remove("opacity-50", "pointer-events-none");
     renderConversations();
-    sendSocket({ type: "join_conversation", cid: conversationId });
+    sendSocket("join", { cid: conversationId });
     await loadConversationHistory(conversationId);
   }
 
@@ -380,7 +369,7 @@
 
     const clientId = crypto.randomUUID();
     appendMessage({ msg, ts: Date.now(), client_id: clientId }, true);
-    sendSocket({ type: "send_message", cid: state.activeConversationId, client_id: clientId, msg });
+    sendSocket("message", { cid: state.activeConversationId, clid: clientId, msg });
     UI.messageInput.value = "";
   });
 
@@ -390,7 +379,7 @@
       return;
     }
     clearTimeout(typingDebounce);
-    sendSocket({ type: "typing", cid: state.activeConversationId });
+    // sendSocket("typing", { cid: state.activeConversationId }); // TODO: implement typing
     typingDebounce = setTimeout(() => {}, 2000);
   });
 
